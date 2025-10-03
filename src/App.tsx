@@ -37,7 +37,7 @@ function App() {
 
       const requestFilters = {
         ...restFilters,
-        ...(sortBy !== "local" ? { sortBy } : {}),
+        ...(sortBy ? { sortBy } : {}), // Ensure sortBy is included if provided
         startAfterDocId: pageToken,
       };
 
@@ -62,6 +62,8 @@ function App() {
     setPageTokens({});
     setIsAIQuery(false);
     setCurrentQuery(null);
+
+    // Ensure the updated filters include the new sorting options
     loadFlights(undefined, updatedFilters);
   };
 

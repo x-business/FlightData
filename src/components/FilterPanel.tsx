@@ -92,13 +92,14 @@ export function FilterPanel({ filters, onFiltersChange, onApplyFilters }: Filter
 
         {/* Sort By */}
         <div className="group animate-fadeInUp" style={{ animationDelay: '0.5s' }}>
-          <Label icon={<SlidersHorizontal className="text-purple-500" />} title="Sort By" />
+          <Label icon={<SlidersHorizontal className="text-purple-500" />} title="Sorting" />
           <Select
-            value={filters.sortBy || 'local'}
+            value={filters.sortBy || 'departure_time'}
             onChange={(e) => handleChange('sortBy', e.target.value)}
             options={[
-              { value: 'local', label: 'Local Time' },
-              { value: 'utc', label: 'UTC Time' },
+              { value: 'departure_time', label: 'Departure Time' },
+              { value: 'arrival_time', label: 'Arrival Time' },
+              { value: 'airline', label: 'Airline' },
             ]}
           />
         </div>

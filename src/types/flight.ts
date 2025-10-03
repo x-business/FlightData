@@ -27,7 +27,7 @@ export interface FlightFilters {
   destination_data?: string;
   airline_data?: string;
   route_data?: string;
-  sortBy?: 'utc' | 'local';
+  sortBy?: 'departure_time' | 'arrival_time' | 'airline'; // Updated sorting options
   limit?: number;
   startAfterDocId?: string;
 }
