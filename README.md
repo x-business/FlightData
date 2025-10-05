@@ -1,76 +1,85 @@
-# Flight Data Dashboard with AI-Powered Natural Language Filtering
+# Flight Data Dashboard
 
-A full-stack React application that displays live flight data with advanced filtering, pagination, and AI-powered natural language search capabilities using Google Gemini.
+A modern React-based flight data dashboard that connects to a flight API and integrates AI-powered natural language query capabilities. Built with TypeScript, Vite, and Tailwind CSS.
 
 ## Features
 
-- **Real-time Flight Data**: Fetches live flight information from the n8n API
-- **Advanced Filtering**: Filter by airport, airline, destination, and date
-- **Pagination**: Navigate through large datasets efficiently with proper page state management
-- **Sorting**: Sort flights by local or UTC time
-- **AI-Powered Search**: Natural language queries powered by Google Gemini
-  - Example: "Show me all flights from Brisbane to Manila on October 9"
-  - Example: "All flights leaving Australia after lunch time"
-- **Query History**: Stores and displays previous AI searches in Supabase database
-- **Responsive Design**: Optimized for desktop, tablet, and mobile devices
-- **Loading States**: Clear feedback during data fetching
-- **Error Handling**: Comprehensive error messages for better user experience
+- **Real-time Flight Data**: Fetches flight information from a provided API
+- **AI-Powered Search**: Natural language queries using Google Gemini AI
+- **Advanced Filtering**: Filter flights by date, origin, destination, airline, and time ranges
+- **Pagination**: Navigate through large datasets efficiently
+- **Sorting**: Sort flights by departure time, arrival time, or airline
+- **Voice Input**: Speech-to-text functionality for hands-free querying
+- **Query History**: Track and view previous AI queries
+- **Responsive Design**: Modern UI that works on all devices
+- **Database Integration**: Supabase for storing query history and caching
 
 ## Tech Stack
 
-### Frontend
-- **React 18** with TypeScript
-- **Vite** for fast development and optimized builds
-- **Tailwind CSS** for styling
-- **Lucide React** for icons
+- **Frontend**: React 18, TypeScript, Vite
+- **Styling**: Tailwind CSS
+- **AI Integration**: Google Gemini AI (@google/genai)
+- **Database**: Supabase
+- **Icons**: Lucide React
+- **Build Tool**: Vite
 
-### Backend & Services
-- **Supabase** for database (PostgreSQL)
-- **Google Gemini AI** for natural language processing
-- **n8n API** for flight data
+## Prerequisites
+
+- Node.js (v18 or higher)
+- npm or yarn
+- Supabase account
+- Google AI API key
 
 ## Setup Instructions
 
-### Prerequisites
-- Node.js (v18 or higher)
-- Google Gemini API key from [AI Studio](https://aistudio.google.com/api-keys)
+### 1. Clone the Repository
 
-### Installation
-
-1. Clone the repository
 ```bash
-git clone <repository-url>
-cd project
+git clone <your-repo-url>
+cd FlightDashboard
 ```
 
-2. Install dependencies
+### 2. Install Dependencies
+
 ```bash
 npm install
 ```
 
-3. Configure environment variables
+### 3. Environment Variables
 
-Edit the `.env` file and add your Google Gemini API key:
+Create a `.env` file in the root directory with the following variables:
 
 ```env
-VITE_SUPABASE_URL=https://qsbxfzxtgqjtgpsngupd.supabase.co
-VITE_SUPABASE_ANON_KEY=<already-configured>
 VITE_GEMINI_API_KEY=your_gemini_api_key_here
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-4. Start the development server
+### 4. Database Setup
+
+The project includes a Supabase migration file. Run the migration to create the necessary tables:
+
+```sql
+-- Run this in your Supabase SQL editor
+-- File: supabase/migrations/20251003145948_create_ai_queries_and_cache.sql
+```
+
+This creates two tables:
+- `ai_queries`: Stores user queries and parsed filters
+- `flight_cache`: For caching API responses (optional)
+
+### 5. Development Server
+
 ```bash
 npm run dev
 ```
 
-5. Build for production
+The application will be available at `http://localhost:5173`
+
+### 6. Build for Production
+
 ```bash
 npm run build
-```
-
-6. Preview production build
-```bash
-npm run preview
 ```
 
 ## Project Structure
@@ -78,148 +87,106 @@ npm run preview
 ```
 src/
 ├── components/           # React components
-│   ├── AIQueryPanel.tsx     # Natural language search interface
-│   ├── FilterPanel.tsx      # Manual filter controls
-│   ├── FlightTable.tsx      # Flight data table
-│   ├── Pagination.tsx       # Pagination controls
-│   └── QueryHistory.tsx     # AI query history display
-├── services/            # API and business logic
-│   ├── flightApi.ts         # Flight data fetching
-│   ├── geminiService.ts     # AI query parsing
-│   └── aiQueryService.ts    # Query history management
-├── types/              # TypeScript definitions
-│   └── flight.ts           # Flight data types
-├── lib/                # Utility libraries
-│   └── supabase.ts         # Supabase client
-├── App.tsx             # Main application component
-└── main.tsx            # Application entry point
+│   ├── common/          # Shared components
+│   ├── AIQueryPanel.tsx # AI search interface
+│   ├── FilterPanel.tsx  # Flight filters
+│   ├── FlightTable.tsx  # Flight data table
+│   ├── Pagination.tsx   # Pagination controls
+│   └── QueryHistory.tsx # Query history display
+├── services/            # API and service layer
+│   ├── flightApi.ts     # Flight API integration
+│   ├── aiQueryService.ts # AI query storage
+│   └── geminiService.ts # Gemini AI integration
+├── types/               # TypeScript type definitions
+│   └── flight.ts        # Flight-related types
+├── lib/                 # External library configurations
+│   └── supabase.ts      # Supabase client setup
+└── App.tsx              # Main application component
 ```
-
-## Database Schema
-
-### ai_queries Table
-Stores AI search queries and results:
-- `id` (uuid): Primary key
-- `user_query` (text): Natural language query
-- `parsed_filters` (jsonb): Extracted filter parameters
-- `result_count` (integer): Number of results found
-- `created_at` (timestamptz): Query timestamp
-
-### flight_cache Table
-Caches API responses (backend use only):
-- `id` (uuid): Primary key
-- `cache_key` (text): Unique identifier for cached data
-- `response_data` (jsonb): Cached API response
-- `expires_at` (timestamptz): Cache expiration time
-- `created_at` (timestamptz): Cache creation time
 
 ## API Integration
 
-### n8n Flight Data API
+The dashboard connects to a flight data API endpoint:
+- **Endpoint**: `https://n8n-dev.qrewhub.com/webhook/flight-data-test`
+- **Method**: POST
+- **Data Format**: JSON with filter parameters
 
-**Endpoint**: `https://n8n-dev.qrewhub.com/webhook/flight-data-test`
+### Available Data Dates
+- 2025-10-02
+- 2025-10-03
+- 2025-10-08
+- 2025-10-09
+- 2025-10-10
 
-**Available Dates**: October 2-3 and 8-10, 2025
+## AI Query Examples
 
-**Request Example**:
-```json
-{
-  "service_date": "2025-10-09",
-  "origin_data": "BNE",
-  "destination_data": "MNL",
-  "limit": 100,
-  "sortBy": "local"
-}
-```
+The AI can understand natural language queries like:
 
-**Response Format**:
-```json
-{
-  "ok": true,
-  "count": 50,
-  "nextPageToken": "doc123",
-  "items": [
-    {
-      "id": "flight123",
-      "data": {
-        "flight_data": "QF123",
-        "airline_name": "Qantas",
-        "origin_data": "BNE",
-        "destination_data": "MNL",
-        ...
-      }
-    }
-  ]
-}
-```
+- "Show me flights from Brisbane to Manila on October 9"
+- "All flights leaving Australia after lunch time"
+- "Flights to the Philippines tomorrow"
+- "Morning flights from Sydney"
+- "Flights between 2pm and 6pm"
 
-## Design Decisions
+## Key Features Explained
 
-### Architecture
-- **Modular Component Design**: Each component has a single responsibility, making the code maintainable and testable
-- **Service Layer**: Separated API calls and business logic from UI components
-- **Type Safety**: Full TypeScript coverage ensures type safety throughout the application
+### AI Query Processing
+The `geminiService.ts` handles natural language processing:
+- Converts user queries to structured filter objects
+- Supports time range parsing (morning, afternoon, evening, night)
+- Handles airport codes and airline codes
+- Provides fallback parsing for complex time expressions
 
-### State Management
-- **Local State with Hooks**: Uses React hooks for straightforward state management
-- **Page Token Management**: Stores page tokens in a map to enable both forward and backward pagination
-
-### AI Integration
-- **Natural Language Processing**: Google Gemini parses user queries into structured filter parameters
-- **Query History**: All AI searches are stored in Supabase for user reference and analysis
-- **Error Handling**: Graceful fallbacks when AI parsing fails
-
-### Caching Strategy
-- **Database Schema**: Prepared for API response caching (currently implemented at schema level)
-- **Future Enhancement**: Can be extended to reduce redundant API calls
-
-### UX/UI Design
-- **Clean, Modern Interface**: Slate color palette for professional appearance
-- **Responsive Layout**: Mobile-first design with breakpoints for larger screens
-- **Visual Feedback**: Loading states, error messages, and success indicators
-- **Accessibility**: Semantic HTML and proper ARIA labels
-
-## Usage
-
-### Manual Filtering
-1. Use the filter panel to select:
-   - Service date (use available dates: Oct 2-3 or 8-10, 2025)
-   - Origin airport (3-letter data code)
-   - Destination airport (3-letter data code)
-   - Airline (2-letter data code)
-   - Sort order (Local or UTC time)
-2. Click "Apply Filters" to search
-
-### AI-Powered Search
-1. Type a natural language query in the AI search box
-2. Examples:
-   - "Show me flights from Brisbane to Manila on October 9"
-   - "All flights leaving Australia to the Philippines after lunch time"
-   - "Flights to Manila tomorrow"
-3. Click "Search" or press Enter
-4. Results will display with the parsed filters shown
+### Filtering System
+The `FilterPanel.tsx` provides:
+- Date selection
+- Origin/destination filtering
+- Airline filtering
+- Time range selection
+- Sorting options
 
 ### Pagination
-- Use "Previous" and "Next" buttons to navigate through results
-- Page number and result count are displayed
-- Previous pages are cached for faster navigation
+Implements cursor-based pagination using `nextPageToken` for efficient data loading.
 
-## Known Limitations
+### Voice Input
+Uses Web Speech API for hands-free query input with microphone support.
 
-- Data is only available for specific dates (Oct 2-3 and 8-10, 2025)
-- AI parsing requires a valid Gemini API key
-- API rate limits may apply depending on usage
+## Deployment
 
-## Future Enhancements
+### Vercel Deployment
 
-- Real-time flight status updates
-- Advanced analytics and visualizations
-- Export functionality (CSV, JSON, PDF)
-- User authentication and personalized filters
-- Flight price tracking
-- Email notifications for flight changes
-- Voice input for AI queries
+1. Connect your GitHub repository to Vercel
+2. Set environment variables in Vercel dashboard
+3. Deploy automatically on push to main branch
+
+### Other Platforms
+
+The app can be deployed to any static hosting service:
+- Netlify
+- GitHub Pages
+- AWS S3 + CloudFront
+- Firebase Hosting
+
+## Development Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+- `npm run typecheck` - Run TypeScript type checking
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
 ## License
 
-This project is for demonstration purposes as part of a developer examination.
+This project is part of a technical challenge and is not intended for commercial use.
+
+## Support
+
+For questions or issues, please refer to the project documentation or contact the development team.
