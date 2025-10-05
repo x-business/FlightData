@@ -13,6 +13,7 @@ export function FlightTable({ flights }: FlightTableProps) {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
+        timeZone: 'UTC', // Force UTC to avoid time zone adjustments
       });
     } catch {
       return 'N/A';

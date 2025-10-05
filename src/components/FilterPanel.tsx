@@ -1,5 +1,6 @@
 import { FlightFilters } from '../types/flight';
-import { Calendar, MapPin, Plane, SlidersHorizontal, List, Sparkles } from 'lucide-react';
+import { Calendar, MapPin, Plane, SlidersHorizontal, List, Sparkles, Clock } from 'lucide-react';
+import { MultiSelect } from './common/MultiSelect';
 
 interface FilterPanelProps {
   filters: FlightFilters;
@@ -87,6 +88,21 @@ export function FilterPanel({ filters, onFiltersChange, onApplyFilters }: Filter
             badge="CODE"
             maxLength={2}
             uppercase
+          />
+        </div>
+
+        {/* Departure Time Range */}
+        <div className="group animate-fadeInUp" style={{ animationDelay: '0.45s' }}>
+          <Label icon={<Clock className="text-orange-500" />} title="Departure Time Range" />
+          <MultiSelect
+            value={filters.departure_time_range || []}
+            onChange={(selected) => handleChange("departure_time_range", selected)}
+            options={[
+              { value: "morning", label: "Morning (05:00 – 11:59)" },
+              { value: "afternoon", label: "Afternoon (12:00 – 17:59)" },
+              { value: "evening", label: "Evening (18:00 – 22:59)" },
+              { value: "night", label: "Night (23:00 – 04:59)" },
+            ]}
           />
         </div>
 

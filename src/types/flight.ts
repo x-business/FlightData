@@ -27,9 +27,10 @@ export interface FlightFilters {
   destination_data?: string;
   airline_data?: string;
   route_data?: string;
-  sortBy?: 'departure_time' | 'arrival_time' | 'airline'; // Updated sorting options
+  sortBy?: 'departure_time' | 'arrival_time' | 'airline';
   limit?: number;
   startAfterDocId?: string;
+  departure_time_range?: string[];
 }
 
 export interface AIQuery {
