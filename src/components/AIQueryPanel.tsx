@@ -71,7 +71,10 @@ export function AIQueryPanel({ onQueryParsed }: AIQueryPanelProps) {
     };
 
     recognition.onerror = (event: any) => {
-      console.error('Speech recognition error:', event.error);
+      console.error("Speech recognition error:", event.error);
+      if (event.error === "not-allowed") {
+        alert("Microphone access was denied. Please allow it to use voice input.");
+      }
       setIsRecording(false);
     };
 
